@@ -9,7 +9,7 @@ const withAuthorization = authCondition => WrappedComponent => {
     componentDidMount() {
       firebase.auth.onAuthStateChanged(authUser => {
         if (!authCondition(authUser)) {
-          this.props.history.push("/GreenLeaf");
+          this.props.history.push("/");
         }
       });
     }

@@ -26,7 +26,7 @@ class Login extends Component {
       .doSignInWithEmailAndPassword(email, password)
       .then(() => {
         this.setState({ ...INITIAL_STATE });
-        history.push("/GreenLeaf/dashboard");
+        history.push("/dashboard");
       })
       .catch(error => {
         this.setState(byPropKey("error", error));
@@ -49,7 +49,7 @@ class Login extends Component {
         >
           <Grid.Column style={{ maxWidth: 450 }}>
             <Header as="h2" color="grey" textAlign="center">
-              <Icon name="signup" /> Log-in to your account
+              <Icon name="signup" /> Green Leaf
             </Header>
             <Form size="large" onSubmit={this.onSubmit}>
               <Segment stacked>

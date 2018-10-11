@@ -9,8 +9,8 @@ class App extends Component {
   render() {
     return (
       <Switch>
-        <Route exact path="/GreenLeaf" component={Login} />
-        <Route exact path="/GreenLeaf/dashboard" component={Dashboard} />
+        <Route exact path="/" component={Login} />
+        <Route exact path="/dashboard" component={Dashboard} />
       </Switch>
     );
   }
