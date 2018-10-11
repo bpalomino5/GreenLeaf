@@ -1,14 +1,19 @@
 import React, { Component } from "react";
-import "./App.css";
+import "./styles/App.css";
+import Login from "./pages/Login";
+import Dashboard from "./pages/Dashboard";
+import { Switch, Route } from "react-router-dom";
+import withAuthentication from "./components/withAuthentication";
 
-export default class App extends Component {
+class App extends Component {
   render() {
     return (
-      <div className="App">
-        <header className="App-header">
-          <p>Hello World!</p>
-        </header>
-      </div>
+      <Switch>
+        <Route exact path="/GreenLeaf" component={Login} />
+        <Route exact path="/GreenLeaf/dashboard" component={Dashboard} />
+      </Switch>
     );
   }
 }
+
+export default withAuthentication(App);

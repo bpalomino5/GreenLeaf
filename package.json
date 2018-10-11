@@ -2,12 +2,15 @@
   "name": "greensite",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://bpalomino5.github.io/GreenLeaf",
+  "homepage": "https://bpalomino5.github.io/GreenLeaf/",
   "dependencies": {
+    "firebase": "^5.5.3",
     "gh-pages": "^2.0.1",
     "react": "^16.5.2",
     "react-dom": "^16.5.2",
-    "react-scripts": "2.0.4"
+    "react-router-dom": "^4.3.1",
+    "react-scripts": "2.0.4",
+    "semantic-ui-react": "^0.82.5"
   },
   "scripts": {
     "start": "react-scripts start",
