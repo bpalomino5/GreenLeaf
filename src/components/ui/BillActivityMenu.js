@@ -3,6 +3,53 @@ import { Card, Modal, Form, Dropdown, Button } from "semantic-ui-react";
 import { db } from "../../firebase";
 const options = [{ key: 1, text: "Add Bill", value: 1 }];
 
+const AddBillModal = ({
+  addModalOpen,
+  handleClose,
+  handleFormSubmit,
+  handleFormChange,
+  cName,
+  mPayment
+}) => {
+  return (
+    <Modal
+      style={{ height: "auto" }}
+      open={addModalOpen}
+      onClose={handleClose}
+      dimmer="blurring"
+      size="mini"
+      centered
+    >
+      <Modal.Header>Add Bill</Modal.Header>
+      <Modal.Content>
+        <Form onSubmit={handleFormSubmit}>
+          <Form.Group>
+            <Form.Input
+              label="Company Name"
+              placeholder="Name"
+              value={cName}
+              name="cName"
+              onChange={handleFormChange}
+              width={6}
+            />
+            <Form.Input
+              label="Monthly Payment"
+              placeholder="Value"
+              value={mPayment}
+              width={6}
+              name="mPayment"
+              onChange={handleFormChange}
+            />
+          </Form.Group>
+        </Form>
+      </Modal.Content>
+      <Modal.Actions>
+        <Button content="Submit" onClick={handleFormSubmit} />
+      </Modal.Actions>
+    </Modal>
+  );
+};
+
 export default class BillActivityMenu extends Component {
   state = { addModalOpen: false, cName: "", mPayment: "" };
 
@@ -33,41 +80,14 @@ export default class BillActivityMenu extends Component {
             onChange={this.handleChange}
             options={options}
           />
-          <Modal
-            style={{ height: "auto" }}
-            open={addModalOpen}
-            onClose={this.handleClose}
-            dimmer="blurring"
-            size="mini"
-            centered
-          >
-            <Modal.Header>Add Bill</Modal.Header>
-            <Modal.Content>
-              <Form onSubmit={this.handleFormSubmit}>
-                <Form.Group>
-                  <Form.Input
-                    label="Company Name"
-                    placeholder="Name"
-                    value={cName}
-                    name="cName"
-                    onChange={this.handleFormChange}
-                    width={6}
-                  />
-                  <Form.Input
-                    label="Monthly Payment"
-                    placeholder="Value"
-                    value={mPayment}
-                    width={6}
-                    name="mPayment"
-                    onChange={this.handleFormChange}
-                  />
-                </Form.Group>
-              </Form>
-            </Modal.Content>
-            <Modal.Actions>
-              <Button content="Submit" onClick={this.handleFormSubmit} />
-            </Modal.Actions>
-          </Modal>
+          <AddBillModal
+            addModalOpen={addModalOpen}
+            handleClose={this.handleClose}
+            handleFormSubmit={this.handleFormSubmit}
+            handleFormChange={this.handleFormChange}
+            cName={cName}
+            mPayment={mPayment}
+          />
         </Card.Content>
       </Card>
     );

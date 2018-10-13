@@ -1,8 +1,58 @@
 import React, { Component } from "react";
 import { Table, Button, Icon, Modal, Form } from "semantic-ui-react";
+import { db } from "../../firebase";
 
 const formatCurrency = (amount, currency = "USD", locale = "en-us") =>
   new Intl.NumberFormat(locale, { style: "currency", currency }).format(amount);
+
+const DetailModal = ({
+  billItem,
+  handleClose,
+  handleFormChange,
+  handleFormSubmit,
+  detailModalOpen
+}) => {
+  return (
+    <Modal
+      style={{ height: "auto" }}
+      open={detailModalOpen}
+      onClose={handleClose}
+      dimmer="blurring"
+      size="mini"
+      centered
+    >
+      <Modal.Header>Bill Details</Modal.Header>
+      <Modal.Content>
+        <Form>
+          {billItem && (
+            <Form.Group>
+              <Form.Input
+                label="Company Name"
+                placeholder="Name"
+                value={billItem.name}
+                onChange={handleFormChange}
+                name="name"
+                width={10}
+              />
+              <Form.Input
+                label="Monthly Payment"
+                placeholder="Value"
+                name="mPayment"
+                value={billItem.mPayment}
+                width={6}
+                onChange={handleFormChange}
+              />
+            </Form.Group>
+          )}
+        </Form>
+      </Modal.Content>
+      <Modal.Actions>
+        <Button content="Close" onClick={handleClose} />
+        <Button content="Submit" onClick={handleFormSubmit} />
+      </Modal.Actions>
+    </Modal>
+  );
+};
 
 const TableItem = ({
   openDetails,
@@ -25,7 +75,7 @@ const TableItem = ({
       >
         {status ? <Icon name="checkmark" /> : <Icon name="close" />}
       </Table.Cell>
-      <Table.Cell selectable collapsing textAlign="center">
+      <Table.Cell collapsing textAlign="center">
         {formatCurrency(monthlyPayment)}
       </Table.Cell>
       <Table.Cell collapsing textAlign="center">
@@ -55,25 +105,17 @@ export default class BudgetTable extends Component {
 
   handleClose = () => this.setState({ detailModalOpen: false });
 
-  // updateBillName = text => {
-  //   const { index } = this.state;
-  //   const { bills } = this.props;
-  //   bills[index].name = text;
-  //   this.setState({ bills });
-  //   // this.forceUpdate();
-  // };
-
   handleFormChange = (e, { name, value }) =>
     this.setState(prevState => ({
       billItem: { ...prevState.billItem, [name]: value }
     }));
 
-  handleFormSubmit = () => {
+  handleFormSubmit = async () => {
     const { bills } = this.props;
     const { index, billItem } = this.state;
     bills[index] = billItem;
+    await db.editBill(bills[index].ref, billItem);
     this.handleClose();
-    // console.log(this.state.billItem);
   };
 
   render() {
@@ -101,44 +143,20 @@ export default class BudgetTable extends Component {
             />
           ))}
         </Table.Body>
-        <Modal
-          style={{ height: "auto" }}
-          open={detailModalOpen}
-          onClose={this.handleClose}
-          dimmer="blurring"
-          size="mini"
-          centered
-        >
-          <Modal.Header>Bill Details</Modal.Header>
-          <Modal.Content>
-            <Form>
-              {billItem && (
-                <Form.Group>
-                  <Form.Input
-                    label="Company Name"
-                    placeholder="Name"
-                    value={billItem.name}
-                    onChange={this.handleFormChange}
-                    name="name"
-                    width={10}
-                  />
-                  <Form.Input
-                    label="Monthly Payment"
-                    placeholder="Value"
-                    name="mPayment"
-                    value={billItem.mPayment}
-                    width={6}
-                    onChange={this.handleFormChange}
-                  />
-                </Form.Group>
-              )}
-            </Form>
-          </Modal.Content>
-          <Modal.Actions>
-            <Button content="Close" onClick={this.handleClose} />
-            <Button content="Submit" onClick={this.handleFormSubmit} />
-          </Modal.Actions>
-        </Modal>
+        <DetailModal
+          detailModalOpen={detailModalOpen}
+          billItem={billItem}
+          handleClose={this.handleClose}
+          handleFormChange={this.handleFormChange}
+          handleFormSubmit={this.handleFormSubmit}
+        />
+        {/* <Table.Footer fullWidth>
+          <Table.Row>
+            <Table.HeaderCell colSpan="4">
+              <Button floated="right" content="Update" />
+            </Table.HeaderCell>
+          </Table.Row>
+        </Table.Footer> */}
       </Table>
     );
   }

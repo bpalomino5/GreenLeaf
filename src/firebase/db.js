@@ -23,32 +23,62 @@ export const getMyUser = async () => {
   return data;
 };
 
-// export const getAllBills = async () => {
-//   let bills = [];
-//   let snapshot = await db.collection("years/2018/months/October/bills").get();
-//   snapshot.forEach(doc => {
-//     bills.push(doc.data());
-//   });
-//   return bills;
-// };
-
 export const getAllBills = async () => {
+  let date = new Date();
+  let year = date.toLocaleString("en-us", { year: "numeric" });
+  let month = date.toLocaleString("en-us", { month: "long" });
+
   let bills = [];
-  let snapshot = await db.collection("years/2018/months/October/bills").get();
-  await Promise.all(
-    snapshot.docs.map(async doc => {
-      let isPayed = doc.get("isPayed");
-      let billDoc = await doc.get("ref").get();
-      bills.push({
-        isPayed,
-        name: billDoc.get("name"),
-        mPayment: billDoc.get("mPayment")
-      });
-      // bills.push(billDoc.data());
-    })
-  );
-  return bills;
+
+  let doc = await db
+    .collection(`years/${year}/months`)
+    .doc(month)
+    .get();
+  if (doc.exists) {
+    await Promise.all(
+      doc.get("bills").map(async item => {
+        let mainDoc = await item.ref.get();
+        bills.push({
+          ref: item.ref,
+          isPayed: item.isPayed,
+          name: mainDoc.get("name"),
+          mPayment: mainDoc.get("mPayment")
+        });
+      })
+    );
+    return bills;
+  }
 };
+
+export const editBill = async (docRef, billItem) => {
+  await docRef.set({ name: billItem.name }, { merge: true });
+
+  // let date = new Date();
+  // let year = date.toLocaleString("en-us", { year: "numeric" });
+  // let month = date.toLocaleString("en-us", { month: "long" });
+
+  // await db
+  //   .collection(`years/${year}/months`)
+  //   .doc(month)
+  //   .set({ isPayed: billItem.isPayed }, { merge: true });
+};
+
+// let snapshot = await db
+//   .collection(`years/${year}/months/${month}/bills`)
+//   .get();
+// await Promise.all(
+//   snapshot.docs.map(async doc => {
+//     let isPayed = doc.get("isPayed");
+//     let billDoc = await doc.get("ref").get();
+//     bills.push({
+//       isPayed,
+//       name: billDoc.get("name"),
+//       mPayment: billDoc.get("mPayment")
+//     });
+//     // bills.push(billDoc.data());
+//   })
+// );
+// return bills;
 
 export const addBill = async (name, value) => {
   let docRef = await db.collection("bills").add({
@@ -56,7 +86,11 @@ export const addBill = async (name, value) => {
     mPayment: parseFloat(value)
   });
 
-  db.collection("years/2018/months/October/bills").add({
+  let date = new Date();
+  let year = date.toLocaleString("en-us", { year: "numeric" });
+  let month = date.toLocaleString("en-us", { month: "long" });
+
+  db.collection(`years/${year}/months/${month}/bills`).add({
     isPayed: false,
     ref: docRef
   });
