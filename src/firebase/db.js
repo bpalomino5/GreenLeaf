@@ -40,6 +40,7 @@ export const getAllBills = async () => {
         let mainDoc = await item.ref.get();
         bills.push({
           ref: item.ref,
+          amountPayed: item.amountPayed,
           isPayed: item.isPayed,
           name: mainDoc.get("name"),
           mPayment: mainDoc.get("mPayment")
@@ -50,17 +51,28 @@ export const getAllBills = async () => {
   }
 };
 
-export const editBill = async (docRef, billItem) => {
-  await docRef.set({ name: billItem.name }, { merge: true });
+export const updateMasterBill = async (bills, index) => {
+  await bills[index].ref.update({ name: bills[index].name });
+};
 
-  // let date = new Date();
-  // let year = date.toLocaleString("en-us", { year: "numeric" });
-  // let month = date.toLocaleString("en-us", { month: "long" });
+export const updateCurrentBills = async bills => {
+  let date = new Date();
+  let year = date.toLocaleString("en-us", { year: "numeric" });
+  let month = date.toLocaleString("en-us", { month: "long" });
 
-  // await db
-  //   .collection(`years/${year}/months`)
-  //   .doc(month)
-  //   .set({ isPayed: billItem.isPayed }, { merge: true });
+  let currentBills = [];
+  bills.forEach(bill =>
+    currentBills.push({
+      isPayed: bill.isPayed,
+      amountPayed: bill.amountPayed,
+      ref: bill.ref
+    })
+  );
+
+  await db
+    .collection(`years/${year}/months`)
+    .doc(month)
+    .update({ bills: currentBills });
 };
 
 // let snapshot = await db
