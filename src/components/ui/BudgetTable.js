@@ -169,9 +169,8 @@ export default class BudgetTable extends Component {
 
   updateBills = async () => {
     const { bills } = this.props;
-    const { index } = this.state;
     this.setState({ canUpdate: false });
-    await db.updateMasterBill(bills, index);
+    await db.updateMasterBills(bills);
     await db.updateCurrentBills(bills);
   };
 

@@ -1,4 +1,4 @@
-import { auth, db } from "./firebase";
+import { auth, db, dbTools } from "./firebase";
 
 // User API
 export const getOtherUsers = async () => {
@@ -51,8 +51,12 @@ export const getAllBills = async () => {
   }
 };
 
-export const updateMasterBill = async (bills, index) => {
-  await bills[index].ref.update({ name: bills[index].name });
+export const updateMasterBills = async bills => {
+  await Promise.all(
+    bills.map(async bill => {
+      await bill.ref.update({ name: bill.name });
+    })
+  );
 };
 
 export const updateCurrentBills = async bills => {
@@ -75,23 +79,6 @@ export const updateCurrentBills = async bills => {
     .update({ bills: currentBills });
 };
 
-// let snapshot = await db
-//   .collection(`years/${year}/months/${month}/bills`)
-//   .get();
-// await Promise.all(
-//   snapshot.docs.map(async doc => {
-//     let isPayed = doc.get("isPayed");
-//     let billDoc = await doc.get("ref").get();
-//     bills.push({
-//       isPayed,
-//       name: billDoc.get("name"),
-//       mPayment: billDoc.get("mPayment")
-//     });
-//     // bills.push(billDoc.data());
-//   })
-// );
-// return bills;
-
 export const addBill = async (name, value) => {
   let docRef = await db.collection("bills").add({
     name,
@@ -102,8 +89,12 @@ export const addBill = async (name, value) => {
   let year = date.toLocaleString("en-us", { year: "numeric" });
   let month = date.toLocaleString("en-us", { month: "long" });
 
-  db.collection(`years/${year}/months/${month}/bills`).add({
-    isPayed: false,
-    ref: docRef
-  });
+  db.collection(`years/${year}/months`)
+    .doc(month)
+    .update({
+      bills: dbTools.arrayUnion({
+        isPayed: false,
+        ref: docRef
+      })
+    });
 };

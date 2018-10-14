@@ -16,7 +16,8 @@ if (!firebase.apps.length) {
   firebase.initializeApp(config);
 }
 
+const dbTools = firebase.firestore.FieldValue;
 const db = firebase.firestore();
 const auth = firebase.auth();
 
-export { auth, db };
+export { auth, db, dbTools };
