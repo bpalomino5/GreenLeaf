@@ -16,7 +16,7 @@ self.__precacheManifest = [
     "url": "/GreenLeaf/static/css/main.2408678a.chunk.css"
   },
   {
-    "revision": "94605a5c33627d5b5de1b1fa2db02754",
+    "revision": "0e9f10fb7bc63cc583ccf2fac7cde179",
     "url": "/GreenLeaf/index.html"
   }
 ];
