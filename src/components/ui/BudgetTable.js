@@ -58,13 +58,13 @@ const DetailModal = ({
                 width={6}
               />
               <Form.Input
-                readOnly
                 icon="dollar"
                 iconPosition="left"
                 label="Monthly Payment"
                 placeholder="Value"
                 name="mPayment"
                 value={billItem.mPayment}
+                onChange={onChangeInput}
                 width={3}
               />
               <Form.Input label="Due On">
@@ -306,6 +306,7 @@ export default class BudgetTable extends Component {
         <Table.Body>
           {bills.map((item, i) => (
             <TableItem
+              key={item.name}
               openDetails={() => this.openDetailModal(i)}
               toggleStatus={() => this.toggleStatus(i)}
               openPayModal={() => this.openPayModal(i)}

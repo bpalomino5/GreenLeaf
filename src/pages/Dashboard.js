@@ -38,6 +38,7 @@ const FamilyCard = ({ users }) => {
       </Card.Content>
       {users.map(user => (
         <Card.Content
+          key={user.name}
           header={user.name}
           meta={user.member}
           description={user.occupation}
