@@ -1,5 +1,13 @@
 import React, { Component } from "react";
-import { Table, Button, Icon, Modal, Form, Dropdown } from "semantic-ui-react";
+import {
+  Table,
+  Button,
+  Icon,
+  Modal,
+  Form,
+  Dropdown,
+  Confirm
+} from "semantic-ui-react";
 import { db } from "../../firebase";
 
 const days = Array.from({ length: 31 }, (v, i) => ({
@@ -21,7 +29,11 @@ const DetailModal = ({
   onClose,
   onChangeInput,
   detailModalOpen,
-  onDropdownChange
+  onDropdownChange,
+  onConfirmRemove,
+  confirmCancel,
+  confirmOpen,
+  onConfirmOpen
 }) => {
   return (
     <Modal
@@ -113,6 +125,15 @@ const DetailModal = ({
         )}
       </Modal.Content>
       <Modal.Actions>
+        <Button color="red" content="Remove" onClick={onConfirmOpen} />
+        <Confirm
+          open={confirmOpen}
+          onCancel={confirmCancel}
+          onConfirm={onConfirmRemove}
+          size="tiny"
+          confirmButton="Yes"
+          style={{ height: "auto" }}
+        />
         <Button content="Close" onClick={onClose} />
       </Modal.Actions>
     </Modal>
@@ -197,7 +218,18 @@ export default class BudgetTable extends Component {
     detailModalOpen: false,
     index: 0,
     billItem: null,
-    canUpdate: false
+    canUpdate: false,
+    confirmOpen: false
+  };
+
+  openConfirm = () => this.setState({ confirmOpen: true });
+  closeConfirm = () => this.setState({ confirmOpen: false });
+
+  removeBill = () => {
+    const { bills } = this.props;
+    const { index } = this.state;
+    bills.splice(index, 1);
+    this.setState({ detailModalOpen: false, canUpdate: true });
   };
 
   toggleStatus = async i => {
@@ -256,7 +288,8 @@ export default class BudgetTable extends Component {
       paymentModalOpen,
       detailModalOpen,
       billItem,
-      canUpdate
+      canUpdate,
+      confirmOpen
     } = this.state;
     const { bills } = this.props;
     return (
@@ -283,6 +316,10 @@ export default class BudgetTable extends Component {
           ))}
         </Table.Body>
         <DetailModal
+          onConfirmRemove={this.removeBill}
+          confirmCancel={this.closeConfirm}
+          confirmOpen={confirmOpen}
+          onConfirmOpen={this.openConfirm}
           detailModalOpen={detailModalOpen}
           billItem={billItem}
           onClose={this.closeDetailModal}

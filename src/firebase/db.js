@@ -126,16 +126,27 @@ export const updateCurrentBills = async (bills, year, month) => {
 };
 
 export const addBill = async (billItem, year, month) => {
-  let docRef = await db.collection("bills").add({
-    name: billItem.name,
-    mPayment: parseFloat(billItem.mPayment),
-    due: billItem.due,
-    url: billItem.url,
-    username: billItem.username,
-    password: billItem.password,
-    notes: billItem.notes,
-    paymentType: billItem.paymentType
-  });
+  // checks master bills if new bill already exists, adds ref to local else creates new master with ref
+  let docRef = null;
+  let snapshot = await db
+    .collection("bills")
+    .where("name", "==", billItem.name)
+    .get();
+
+  if (snapshot.size === 1) {
+    docRef = snapshot.docs[0].ref;
+  } else {
+    docRef = await db.collection("bills").add({
+      name: billItem.name,
+      mPayment: parseFloat(billItem.mPayment),
+      due: billItem.due,
+      url: billItem.url,
+      username: billItem.username,
+      password: billItem.password,
+      notes: billItem.notes,
+      paymentType: billItem.paymentType
+    });
+  }
 
   await db
     .collection(`years/${year}/months`)

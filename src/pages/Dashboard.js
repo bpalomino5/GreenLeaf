@@ -11,7 +11,7 @@ import BudgetTable from "../components/ui/BudgetTable";
 import BillActivityMenu from "../components/ui/BillActivityMenu";
 
 // libs
-import { Divider, Card } from "semantic-ui-react";
+import { Card } from "semantic-ui-react";
 import { db } from "../firebase";
 
 const UserCard = ({ profile, email }) => {
