@@ -11,7 +11,7 @@ import BudgetTable from "../components/ui/BudgetTable";
 import BillActivityMenu from "../components/ui/BillActivityMenu";
 
 // libs
-import { Grid, Card } from "semantic-ui-react";
+import { Divider, Card } from "semantic-ui-react";
 import { db } from "../firebase";
 
 const UserCard = ({ profile, email }) => {
@@ -81,21 +81,35 @@ class Dashboard extends Component {
   render() {
     const { profile, users, bills, year, month } = this.state;
     return (
-      <div>
-        <Grid columns={2} divided padded>
-          <Grid.Column width={4}>
-            <AuthUserContext.Consumer>
-              {authUser => (
-                <div>
-                  {profile && (
-                    <UserCard email={authUser.email} profile={profile} />
-                  )}
-                  <FamilyCard users={users} />
-                </div>
-              )}
-            </AuthUserContext.Consumer>
-          </Grid.Column>
-          <Grid.Column width={6} computer={11}>
+      <div style={{ display: "flex", flex: 1 }}>
+        <div
+          style={{
+            display: "flex",
+            flex: 0,
+            padding: 20
+          }}
+        >
+          <AuthUserContext.Consumer>
+            {authUser => (
+              <div>
+                {profile && (
+                  <UserCard email={authUser.email} profile={profile} />
+                )}
+                <FamilyCard users={users} />
+              </div>
+            )}
+          </AuthUserContext.Consumer>
+        </div>
+        <div
+          style={{
+            overflowY: "scroll",
+            display: "flex",
+            flex: 1,
+            padding: 20,
+            flexDirection: "column"
+          }}
+        >
+          <div style={{ marginBottom: 20 }}>
             <BillActivityMenu
               year={year}
               month={month}
@@ -103,9 +117,9 @@ class Dashboard extends Component {
               changeMonth={this.changeMonth}
               addedBill={this.addedBill}
             />
-            <BudgetTable bills={bills} year={year} month={month} />
-          </Grid.Column>
-        </Grid>
+          </div>
+          <BudgetTable bills={bills} year={year} month={month} />
+        </div>
       </div>
     );
   }
