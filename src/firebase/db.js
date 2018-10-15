@@ -23,17 +23,17 @@ export const getMyUser = async () => {
   return data;
 };
 
-export const getAllBills = async () => {
-  let date = new Date();
-  let year = date.toLocaleString("en-us", { year: "numeric" });
-  let month = date.toLocaleString("en-us", { month: "long" });
+export const getAllBills = async (year = "", month = "") => {
+  if (year === "" || month === "") {
+    let date = new Date();
+    year = date.toLocaleString("en-us", { year: "numeric" });
+    month = date.toLocaleString("en-us", { month: "long" });
+  }
 
   let bills = [];
 
-  let doc = await db
-    .collection(`years/${year}/months`)
-    .doc(month)
-    .get();
+  let docRef = db.collection(`years/${year}/months`).doc(month);
+  let doc = await docRef.get();
   if (doc.exists) {
     await Promise.all(
       doc.get("bills").map(async item => {
@@ -53,8 +53,44 @@ export const getAllBills = async () => {
         });
       })
     );
-    return bills;
+  } else {
+    // no local bill set created for that month and year
+    // create new local set of bills from master set
+    let localBills = [];
+    let snapshot = await db.collection("bills").get();
+    snapshot.forEach(doc => {
+      localBills.push({
+        isPayed: false,
+        amountPayed: 0,
+        ref: doc.ref
+      });
+
+      bills.push({
+        isPayed: false,
+        amountPayed: 0,
+        ref: doc.ref,
+        url: doc.get("url"),
+        paymentType: doc.get("paymentType"),
+        due: doc.get("due"),
+        username: doc.get("username"),
+        password: doc.get("password"),
+        notes: doc.get("notes"),
+        name: doc.get("name"),
+        mPayment: doc.get("mPayment")
+      });
+    });
+
+    await db
+      .collection(`years/${year}/months`)
+      .doc(month)
+      .set(
+        {
+          bills: localBills
+        },
+        { merge: true }
+      );
   }
+  return bills;
 };
 
 export const updateMasterBills = async bills => {
@@ -73,11 +109,7 @@ export const updateMasterBills = async bills => {
   );
 };
 
-export const updateCurrentBills = async bills => {
-  let date = new Date();
-  let year = date.toLocaleString("en-us", { year: "numeric" });
-  let month = date.toLocaleString("en-us", { month: "long" });
-
+export const updateCurrentBills = async (bills, year, month) => {
   let currentBills = [];
   bills.forEach(bill =>
     currentBills.push({
@@ -93,22 +125,29 @@ export const updateCurrentBills = async bills => {
     .update({ bills: currentBills });
 };
 
-export const addBill = async (name, value) => {
+export const addBill = async (billItem, year, month) => {
   let docRef = await db.collection("bills").add({
-    name,
-    mPayment: parseFloat(value)
+    name: billItem.name,
+    mPayment: parseFloat(billItem.mPayment),
+    due: billItem.due,
+    url: billItem.url,
+    username: billItem.username,
+    password: billItem.password,
+    notes: billItem.notes,
+    paymentType: billItem.paymentType
   });
 
-  let date = new Date();
-  let year = date.toLocaleString("en-us", { year: "numeric" });
-  let month = date.toLocaleString("en-us", { month: "long" });
-
-  db.collection(`years/${year}/months`)
+  await db
+    .collection(`years/${year}/months`)
     .doc(month)
-    .update({
-      bills: dbTools.arrayUnion({
-        isPayed: false,
-        ref: docRef
-      })
-    });
+    .set(
+      {
+        bills: dbTools.arrayUnion({
+          isPayed: false,
+          amountPayed: 0,
+          ref: docRef
+        })
+      },
+      { merge: true }
+    );
 };

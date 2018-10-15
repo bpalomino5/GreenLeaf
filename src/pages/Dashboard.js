@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import "../styles/Dashboard.css";
 
 // comps
 import SignOutButton from "../components/SignOut";
@@ -47,7 +48,7 @@ const FamilyCard = ({ users }) => {
 };
 
 class Dashboard extends Component {
-  state = { profile: null, users: [], bills: [] };
+  state = { profile: null, users: [], bills: [], year: "", month: "" };
 
   async componentDidMount() {
     this.setState({
@@ -55,10 +56,30 @@ class Dashboard extends Component {
       users: await db.getOtherUsers(),
       bills: await db.getAllBills()
     });
+
+    let date = new Date();
+    let year = date.toLocaleString("en-us", { year: "numeric" });
+    let month = date.toLocaleString("en-us", { month: "long" });
+    this.setState({ year, month });
   }
 
+  addedBill = async () => {
+    const { year, month } = this.state;
+    this.setState({ bills: await db.getAllBills(year, month) });
+  };
+
+  changeYear = async (e, { value }) => {
+    const { month } = this.state;
+    this.setState({ year: value, bills: await db.getAllBills(value, month) });
+  };
+
+  changeMonth = async (e, { value }) => {
+    const { year } = this.state;
+    this.setState({ month: value, bills: await db.getAllBills(year, value) });
+  };
+
   render() {
-    const { profile, users, bills } = this.state;
+    const { profile, users, bills, year, month } = this.state;
     return (
       <div>
         <Grid columns={2} divided padded>
@@ -75,8 +96,14 @@ class Dashboard extends Component {
             </AuthUserContext.Consumer>
           </Grid.Column>
           <Grid.Column width={6} computer={11}>
-            <BillActivityMenu />
-            <BudgetTable bills={bills} />
+            <BillActivityMenu
+              year={year}
+              month={month}
+              changeYear={this.changeYear}
+              changeMonth={this.changeMonth}
+              addedBill={this.addedBill}
+            />
+            <BudgetTable bills={bills} year={year} month={month} />
           </Grid.Column>
         </Grid>
       </div>
