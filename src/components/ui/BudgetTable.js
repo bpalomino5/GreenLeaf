@@ -1,24 +1,41 @@
 import React, { Component } from "react";
-import { Table, Button, Icon, Modal, Form } from "semantic-ui-react";
+import { Table, Button, Icon, Modal, Form, Dropdown } from "semantic-ui-react";
 import { db } from "../../firebase";
+
+const days = Array.from({ length: 31 }, (v, i) => ({
+  key: i + 1,
+  text: i + 1 + "",
+  value: i + 1
+}));
+
+const types = [
+  { key: 1, text: "Auto", value: 1 },
+  { key: 2, text: "Manual", value: 2 }
+];
 
 const formatCurrency = (amount, currency = "USD", locale = "en-us") =>
   new Intl.NumberFormat(locale, { style: "currency", currency }).format(amount);
 
-const DetailModal = ({ billItem, onClose, onChangeInput, detailModalOpen }) => {
+const DetailModal = ({
+  billItem,
+  onClose,
+  onChangeInput,
+  detailModalOpen,
+  onDropdownChange
+}) => {
   return (
     <Modal
       style={{ height: "auto" }}
       open={detailModalOpen}
       onClose={onClose}
       dimmer="blurring"
-      size="mini"
+      size="small"
       centered
     >
       <Modal.Header>Bill Details</Modal.Header>
-      <Modal.Content>
-        <Form>
-          {billItem && (
+      <Modal.Content scrolling>
+        {billItem && (
+          <Form>
             <Form.Group>
               <Form.Input
                 label="Company Name"
@@ -26,7 +43,7 @@ const DetailModal = ({ billItem, onClose, onChangeInput, detailModalOpen }) => {
                 value={billItem.name}
                 onChange={onChangeInput}
                 name="name"
-                width={10}
+                width={6}
               />
               <Form.Input
                 readOnly
@@ -36,11 +53,64 @@ const DetailModal = ({ billItem, onClose, onChangeInput, detailModalOpen }) => {
                 placeholder="Value"
                 name="mPayment"
                 value={billItem.mPayment}
-                width={6}
+                width={3}
+              />
+              <Form.Input label="Due On">
+                <Dropdown
+                  compact
+                  value={billItem.due}
+                  onChange={(e, { value }) => onDropdownChange("due", value)}
+                  selection
+                  options={days}
+                />
+              </Form.Input>
+              <Form.Input label="Payment Type">
+                <Dropdown
+                  compact
+                  value={billItem.paymentType}
+                  onChange={(e, { value }) =>
+                    onDropdownChange("paymentType", value)
+                  }
+                  selection
+                  options={types}
+                />
+              </Form.Input>
+            </Form.Group>
+            <Form.Group>
+              <Form.Input
+                label="URL"
+                placeholder="http://..."
+                width={10}
+                name="url"
+                value={billItem.url}
+                onChange={onChangeInput}
               />
             </Form.Group>
-          )}
-        </Form>
+            <Form.Group>
+              <Form.Input
+                label="Username"
+                placeholder="email/name"
+                name="username"
+                value={billItem.username}
+                onChange={onChangeInput}
+              />
+              <Form.Input
+                label="Password"
+                placeholder="password"
+                name="password"
+                value={billItem.password}
+                onChange={onChangeInput}
+              />
+            </Form.Group>
+            <Form.TextArea
+              name="notes"
+              value={billItem.notes}
+              onChange={onChangeInput}
+              label="Notes"
+              placeholder="Additional Details"
+            />
+          </Form>
+        )}
       </Modal.Content>
       <Modal.Actions>
         <Button content="Close" onClick={onClose} />
@@ -155,6 +225,13 @@ export default class BudgetTable extends Component {
     }));
   };
 
+  onDropdownChange = (name, value) => {
+    this.setState(prevState => ({
+      billItem: { ...prevState.billItem, [name]: value },
+      canUpdate: true
+    }));
+  };
+
   openPayModal = i => {
     const { bills } = this.props;
     this.setState({ index: i, billItem: bills[i], paymentModalOpen: true });
@@ -210,6 +287,7 @@ export default class BudgetTable extends Component {
           billItem={billItem}
           onClose={this.closeDetailModal}
           onChangeInput={this.formChangeInput}
+          onDropdownChange={(n, v) => this.onDropdownChange(n, v)}
         />
         <PaymentModal
           billItem={billItem}

@@ -75,8 +75,9 @@ export default class BillActivityMenu extends Component {
         </Card.Content>
         <Card.Content>
           <Dropdown
+            value={0}
             text="Options"
-            button
+            selectOnBlur={false}
             onChange={this.handleChange}
             options={options}
           />

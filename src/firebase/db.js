@@ -42,6 +42,12 @@ export const getAllBills = async () => {
           ref: item.ref,
           amountPayed: item.amountPayed,
           isPayed: item.isPayed,
+          url: mainDoc.get("url"),
+          paymentType: mainDoc.get("paymentType"),
+          due: mainDoc.get("due"),
+          username: mainDoc.get("username"),
+          password: mainDoc.get("password"),
+          notes: mainDoc.get("notes"),
           name: mainDoc.get("name"),
           mPayment: mainDoc.get("mPayment")
         });
@@ -54,7 +60,15 @@ export const getAllBills = async () => {
 export const updateMasterBills = async bills => {
   await Promise.all(
     bills.map(async bill => {
-      await bill.ref.update({ name: bill.name });
+      await bill.ref.update({
+        name: bill.name,
+        due: bill.due,
+        paymentType: bill.paymentType,
+        url: bill.url,
+        username: bill.username,
+        password: bill.password,
+        notes: bill.notes
+      });
     })
   );
 };

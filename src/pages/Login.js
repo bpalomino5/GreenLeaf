@@ -1,6 +1,14 @@
 import React, { Component } from "react";
 import "../styles/Login.css";
-import { Button, Form, Grid, Header, Icon, Segment } from "semantic-ui-react";
+import {
+  Button,
+  Form,
+  Grid,
+  Header,
+  Icon,
+  Segment,
+  Message
+} from "semantic-ui-react";
 import { auth } from "../firebase";
 import { withRouter } from "react-router-dom";
 
@@ -77,7 +85,12 @@ class Login extends Component {
                 <Button disabled={isInvalid} color="green" fluid size="large">
                   Login
                 </Button>
-                {error && <p>{error.message}</p>}
+                {error && (
+                  <Message negative>
+                    <Message.Header>Sorry</Message.Header>
+                    <p>{error.message}</p>
+                  </Message>
+                )}
               </Segment>
             </Form>
           </Grid.Column>
