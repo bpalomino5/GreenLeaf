@@ -11,8 +11,120 @@ import BudgetTable from "../components/ui/BudgetTable";
 import BillActivityMenu from "../components/ui/BillActivityMenu";
 
 // libs
-import { Card } from "semantic-ui-react";
+import {
+  Card,
+  Responsive,
+  Sidebar,
+  Menu,
+  Segment,
+  Icon
+} from "semantic-ui-react";
 import { db } from "../firebase";
+
+class DesktopContainer extends Component {
+  render() {
+    const { children, profile, users } = this.props;
+    return (
+      <Responsive minWidth={Responsive.onlyTablet.minWidth}>
+        <div className="flex-style full-height">
+          <div className="side-col">
+            <AuthUserContext.Consumer>
+              {authUser => (
+                <div>
+                  {profile && (
+                    <UserCard email={authUser.email} profile={profile} />
+                  )}
+                  <FamilyCard users={users} />
+                </div>
+              )}
+            </AuthUserContext.Consumer>
+          </div>
+          {children}
+        </div>
+      </Responsive>
+    );
+  }
+}
+
+class MobileContainer extends Component {
+  state = {};
+
+  handlePusherClick = () => {
+    const { sidebarOpened } = this.state;
+
+    if (sidebarOpened) this.setState({ sidebarOpened: false });
+  };
+
+  handleToggle = () =>
+    this.setState({ sidebarOpened: !this.state.sidebarOpened });
+
+  render() {
+    const { children, profile, users } = this.props;
+    const { sidebarOpened } = this.state;
+    return (
+      <Responsive maxWidth={Responsive.onlyMobile.maxWidth}>
+        <Sidebar.Pushable>
+          <Sidebar
+            direction="right"
+            as={Menu}
+            animation="uncover"
+            vertical
+            visible={sidebarOpened}
+            style={{ backgroundColor: "#282c34" }}
+          >
+            <Menu.Item>
+              <AuthUserContext.Consumer>
+                {authUser => (
+                  <div>
+                    {profile && (
+                      <UserCard email={authUser.email} profile={profile} />
+                    )}
+                    <FamilyCard users={users} />
+                  </div>
+                )}
+              </AuthUserContext.Consumer>
+            </Menu.Item>
+          </Sidebar>
+
+          <Sidebar.Pusher
+            dimmed={sidebarOpened}
+            onClick={this.handlePusherClick}
+            style={{ minHeight: "100vh" }}
+          >
+            <Segment
+              inverted
+              textAlign="center"
+              style={{ padding: "1em 0em", backgroundColor: "#282c34" }}
+              vertical
+            >
+              <Menu inverted pointing secondary size="large">
+                <Menu.Item position="left" header>
+                  Green Leaf
+                </Menu.Item>
+                <Menu.Item onClick={this.handleToggle} position="right">
+                  <Icon name="sidebar" />
+                </Menu.Item>
+              </Menu>
+            </Segment>
+            <div className="flex-style full-height">{children}</div>
+          </Sidebar.Pusher>
+        </Sidebar.Pushable>
+      </Responsive>
+    );
+  }
+}
+
+class ResponsiveContainer extends Component {
+  render() {
+    const { children } = this.props;
+    return (
+      <div>
+        <DesktopContainer {...this.props}>{children}</DesktopContainer>
+        <MobileContainer {...this.props}>{children}</MobileContainer>
+      </div>
+    );
+  }
+}
 
 const UserCard = ({ profile, email }) => {
   return (
@@ -82,19 +194,7 @@ class Dashboard extends Component {
   render() {
     const { profile, users, bills, year, month } = this.state;
     return (
-      <div className="flex-style">
-        <div className="side-col">
-          <AuthUserContext.Consumer>
-            {authUser => (
-              <div>
-                {profile && (
-                  <UserCard email={authUser.email} profile={profile} />
-                )}
-                <FamilyCard users={users} />
-              </div>
-            )}
-          </AuthUserContext.Consumer>
-        </div>
+      <ResponsiveContainer profile={profile} users={users}>
         <div className="flex-style main-col">
           <div style={{ marginBottom: 20 }}>
             <BillActivityMenu
@@ -107,7 +207,7 @@ class Dashboard extends Component {
           </div>
           <BudgetTable bills={bills} year={year} month={month} />
         </div>
-      </div>
+      </ResponsiveContainer>
     );
   }
 }

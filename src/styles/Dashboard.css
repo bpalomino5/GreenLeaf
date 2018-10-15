@@ -12,5 +12,11 @@
 .main-col {
   padding: 20px;
   flex-direction: column;
-  overflow-y: scroll;
+  /* overflow-y: scroll; */
+  /* height: 100%; */
+}
+
+.full-height {
+  height: 100%;
+  background-color: #d2d7df;
 }

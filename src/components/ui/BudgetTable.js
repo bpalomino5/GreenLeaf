@@ -125,7 +125,7 @@ export default class BudgetTable extends Component {
     } = this.state;
     const { bills } = this.props;
     return (
-      <Table celled>
+      <Table celled unstackable>
         <Table.Header>
           <Table.Row>
             <Table.HeaderCell>Bill</Table.HeaderCell>
