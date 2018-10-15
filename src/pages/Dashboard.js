@@ -82,14 +82,8 @@ class Dashboard extends Component {
   render() {
     const { profile, users, bills, year, month } = this.state;
     return (
-      <div style={{ display: "flex", flex: 1 }}>
-        <div
-          style={{
-            display: "flex",
-            flex: 0,
-            padding: 20
-          }}
-        >
+      <div className="flex-style">
+        <div className="side-col">
           <AuthUserContext.Consumer>
             {authUser => (
               <div>
@@ -101,15 +95,7 @@ class Dashboard extends Component {
             )}
           </AuthUserContext.Consumer>
         </div>
-        <div
-          style={{
-            overflowY: "scroll",
-            display: "flex",
-            flex: 1,
-            padding: 20,
-            flexDirection: "column"
-          }}
-        >
+        <div className="flex-style main-col">
           <div style={{ marginBottom: 20 }}>
             <BillActivityMenu
               year={year}

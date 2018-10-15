@@ -1,0 +1,16 @@
+.flex-style {
+  display: flex;
+  flex: 1;
+}
+
+.side-col {
+  display: flex;
+  flex: 0;
+  padding: 20px;
+}
+
+.main-col {
+  padding: 20px;
+  flex-direction: column;
+  overflow-y: scroll;
+}

@@ -1,17 +1,7 @@
 import React, { Component } from "react";
-import { Card, Modal, Form, Dropdown, Button } from "semantic-ui-react";
+import { Card, Dropdown } from "semantic-ui-react";
+import DetailModal from "./DetailModal";
 import { db } from "../../firebase";
-
-const days = Array.from({ length: 31 }, (v, i) => ({
-  key: i + 1,
-  text: i + 1 + "",
-  value: i + 1
-}));
-
-const types = [
-  { key: 1, text: "Auto", value: 1 },
-  { key: 2, text: "Manual", value: 2 }
-];
 
 const options = [{ key: 1, text: "Add Bill", value: 1 }];
 
@@ -35,110 +25,6 @@ const months = [
   { key: "nov", text: "November", value: "November" },
   { key: "dec", text: "December", value: "December" }
 ];
-
-const AddBillModal = ({
-  addModalOpen,
-  onClose,
-  onSubmit,
-  billItem,
-  onChangeInput,
-  onDropdownChange
-}) => {
-  return (
-    <Modal
-      style={{ height: "auto" }}
-      open={addModalOpen}
-      onClose={onClose}
-      dimmer="blurring"
-      size="small"
-      centered
-    >
-      <Modal.Header>Add Bill</Modal.Header>
-      <Modal.Content>
-        {billItem && (
-          <Form>
-            <Form.Group>
-              <Form.Input
-                label="Company Name"
-                placeholder="Name"
-                value={billItem.name}
-                onChange={onChangeInput}
-                name="name"
-                width={6}
-              />
-              <Form.Input
-                icon="dollar"
-                iconPosition="left"
-                label="Monthly Payment"
-                placeholder="Value"
-                name="mPayment"
-                onChange={onChangeInput}
-                value={billItem.mPayment}
-                width={3}
-              />
-              <Form.Input label="Due On">
-                <Dropdown
-                  compact
-                  value={billItem.due}
-                  onChange={(e, { value }) => onDropdownChange("due", value)}
-                  selection
-                  options={days}
-                />
-              </Form.Input>
-              <Form.Input label="Payment Type">
-                <Dropdown
-                  compact
-                  value={billItem.paymentType}
-                  onChange={(e, { value }) =>
-                    onDropdownChange("paymentType", value)
-                  }
-                  selection
-                  options={types}
-                />
-              </Form.Input>
-            </Form.Group>
-            <Form.Group>
-              <Form.Input
-                label="URL"
-                placeholder="http://..."
-                width={10}
-                name="url"
-                value={billItem.url}
-                onChange={onChangeInput}
-              />
-            </Form.Group>
-            <Form.Group>
-              <Form.Input
-                label="Username"
-                placeholder="email/name"
-                name="username"
-                value={billItem.username}
-                onChange={onChangeInput}
-              />
-              <Form.Input
-                label="Password"
-                placeholder="password"
-                name="password"
-                value={billItem.password}
-                onChange={onChangeInput}
-              />
-            </Form.Group>
-            <Form.TextArea
-              name="notes"
-              value={billItem.notes}
-              onChange={onChangeInput}
-              label="Notes"
-              placeholder="Additional Details"
-            />
-          </Form>
-        )}
-      </Modal.Content>
-      <Modal.Actions>
-        <Button content="Submit" onClick={onSubmit} />
-      </Modal.Actions>
-    </Modal>
-  );
-};
 
 export default class BillActivityMenu extends Component {
   state = {
@@ -246,8 +132,9 @@ export default class BillActivityMenu extends Component {
               options={options}
             />
           </div>
-          <AddBillModal
-            addModalOpen={addModalOpen}
+          <DetailModal
+            canSubmit
+            detailModalOpen={addModalOpen}
             onClose={this.handleClose}
             onSubmit={this.formSubmit}
             onChangeInput={this.formChangeInput}
