@@ -118,7 +118,10 @@ export default class DetailModal extends Component {
         </Modal.Content>
         <Modal.Actions>
           {canSubmit ? (
-            <Button content="Submit" onClick={onSubmit} />
+            <div>
+              <Button content="Close" onClick={onClose} />
+              <Button content="Submit" onClick={onSubmit} />
+            </div>
           ) : (
             <div>
               <Button color="red" content="Remove" onClick={onConfirmOpen} />

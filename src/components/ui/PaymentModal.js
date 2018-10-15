@@ -6,7 +6,7 @@ export default class PaymentModal extends Component {
     const { modalOpen, onClose, billItem, onChangeInput } = this.props;
     return (
       <Modal
-        style={{ height: "auto", width: "25vw" }}
+        style={{ height: "auto", width: "35vw" }}
         open={modalOpen}
         onClose={onClose}
         dimmer="blurring"

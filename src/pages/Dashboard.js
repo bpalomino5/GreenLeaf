@@ -97,9 +97,9 @@ class MobileContainer extends Component {
               style={{ padding: "1em 0em", backgroundColor: "#282c34" }}
               vertical
             >
-              <Menu inverted pointing secondary size="large">
-                <Menu.Item position="left" header>
-                  Green Leaf
+              <Menu inverted secondary size="large">
+                <Menu.Item position="left">
+                  <h3>Green Leaf</h3>
                 </Menu.Item>
                 <Menu.Item onClick={this.handleToggle} position="right">
                   <Icon name="sidebar" />

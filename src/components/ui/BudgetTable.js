@@ -13,10 +13,12 @@ const TableItem = ({
   companyName,
   status,
   monthlyPayment,
-  openPayModal
+  openPayModal,
+  url,
+  checkWarning
 }) => {
   return (
-    <Table.Row positive={status}>
+    <Table.Row positive={status} warning={checkWarning && !status}>
       <Table.Cell selectable style={{ paddingLeft: 10 }} onClick={openDetails}>
         <h4>{companyName}</h4>
       </Table.Cell>
@@ -38,7 +40,13 @@ const TableItem = ({
         <h4>{formatCurrency(monthlyPayment)}</h4>
       </Table.Cell>
       <Table.Cell collapsing textAlign="center">
-        <Button content="Pay" />
+        <Button
+          as="a"
+          content="Pay"
+          href={url}
+          disabled={url === ""}
+          target="_blank"
+        />
       </Table.Cell>
     </Table.Row>
   );
@@ -51,7 +59,13 @@ export default class BudgetTable extends Component {
     index: 0,
     billItem: null,
     canUpdate: false,
-    confirmOpen: false
+    confirmOpen: false,
+    date: 0
+  };
+
+  componentDidMount = () => {
+    let date = new Date().getDate();
+    this.setState({ date });
   };
 
   openConfirm = () => this.setState({ confirmOpen: true });
@@ -121,7 +135,8 @@ export default class BudgetTable extends Component {
       detailModalOpen,
       billItem,
       canUpdate,
-      confirmOpen
+      confirmOpen,
+      date
     } = this.state;
     const { bills } = this.props;
     return (
@@ -145,6 +160,8 @@ export default class BudgetTable extends Component {
               companyName={item.name}
               status={item.isPayed}
               monthlyPayment={item.mPayment}
+              url={item.url}
+              checkWarning={date >= item.due - 5 && date <= item.due}
             />
           ))}
         </Table.Body>
