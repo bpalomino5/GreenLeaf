@@ -161,7 +161,7 @@ export default class BudgetTable extends Component {
               status={item.isPayed}
               monthlyPayment={item.mPayment}
               url={item.url}
-              checkWarning={date >= item.due - 5 && date <= item.due}
+              checkWarning={date >= item.due - 3}
             />
           ))}
         </Table.Body>

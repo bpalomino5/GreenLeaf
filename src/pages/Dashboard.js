@@ -26,6 +26,18 @@ class DesktopContainer extends Component {
     const { children, profile, users } = this.props;
     return (
       <Responsive minWidth={Responsive.onlyTablet.minWidth}>
+        <Segment
+          inverted
+          textAlign="center"
+          style={{ padding: "0.5em 0em", backgroundColor: "#32432D" }}
+          vertical
+        >
+          <Menu inverted secondary size="large">
+            <Menu.Item position="left">
+              <h3>Green Leaf</h3>
+            </Menu.Item>
+          </Menu>
+        </Segment>
         <div className="flex-style full-height">
           <div className="side-col">
             <AuthUserContext.Consumer>
@@ -94,7 +106,7 @@ class MobileContainer extends Component {
             <Segment
               inverted
               textAlign="center"
-              style={{ padding: "1em 0em", backgroundColor: "#282c34" }}
+              style={{ padding: "1em 0em", backgroundColor: "#32432D" }}
               vertical
             >
               <Menu inverted secondary size="large">
