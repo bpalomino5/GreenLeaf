@@ -18,7 +18,7 @@ const TableItem = ({
   checkWarning
 }) => {
   return (
-    <Table.Row positive={status} warning={checkWarning && !status}>
+    <Table.Row positive={status} warning={checkWarning}>
       <Table.Cell selectable style={{ paddingLeft: 10 }} onClick={openDetails}>
         <h4>{companyName}</h4>
       </Table.Cell>
@@ -51,6 +51,38 @@ const TableItem = ({
     </Table.Row>
   );
 };
+
+const BillTableFooter = ({ updateBills, total, paid, canUpdate }) => (
+  <Table.Footer fullWidth>
+    <Table.Row>
+      <Table.HeaderCell colSpan="4">
+        <div style={{ display: "flex", flex: 1 }}>
+          <div style={{ display: "flex", flex: 1 }}>
+            <div>
+              <h4 style={{ marginRight: 15 }}>
+                Total: <br />
+                {formatCurrency(total)}
+              </h4>
+            </div>
+            <div>
+              <h4>
+                Payed: <br /> {formatCurrency(paid)}
+              </h4>
+            </div>
+          </div>
+          <div>
+            <Button
+              floated="right"
+              content="Update"
+              disabled={!canUpdate}
+              onClick={updateBills}
+            />
+          </div>
+        </div>
+      </Table.HeaderCell>
+    </Table.Row>
+  </Table.Footer>
+);
 
 export default class BudgetTable extends Component {
   state = {
@@ -138,7 +170,7 @@ export default class BudgetTable extends Component {
       confirmOpen,
       date
     } = this.state;
-    const { bills } = this.props;
+    const { bills, total, paid } = this.props;
     return (
       <Table celled unstackable>
         <Table.Header>
@@ -161,7 +193,7 @@ export default class BudgetTable extends Component {
               status={item.isPayed}
               monthlyPayment={item.mPayment}
               url={item.url}
-              checkWarning={date >= item.due - 3}
+              checkWarning={date >= item.due - 3 && !item.isPayed}
             />
           ))}
         </Table.Body>
@@ -182,18 +214,12 @@ export default class BudgetTable extends Component {
           onClose={this.closePayModal}
           onChangeInput={this.formChangeInput}
         />
-        <Table.Footer fullWidth>
-          <Table.Row>
-            <Table.HeaderCell colSpan="4">
-              <Button
-                floated="right"
-                content="Update"
-                disabled={!canUpdate}
-                onClick={this.updateBills}
-              />
-            </Table.HeaderCell>
-          </Table.Row>
-        </Table.Footer>
+        <BillTableFooter
+          canUpdate={canUpdate}
+          updateBills={this.updateBills}
+          total={total}
+          paid={paid}
+        />
       </Table>
     );
   }

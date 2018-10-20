@@ -173,13 +173,35 @@ const FamilyCard = ({ users }) => {
 };
 
 class Dashboard extends Component {
-  state = { profile: null, users: [], bills: [], year: "", month: "" };
+  state = {
+    profile: null,
+    users: [],
+    bills: [],
+    year: "",
+    month: "",
+    total: 0,
+    paid: 0
+  };
 
   async componentDidMount() {
+    let bills = await db.getAllBills();
+    this.sortBills(bills);
+
+    let total = 0;
+    let paid = 0;
+    bills.forEach(b => {
+      if (b.name !== "Mercury Home Insurance") {
+        total += b.mPayment;
+        paid += b.amountPayed;
+      }
+    });
+
     this.setState({
       profile: await db.getMyUser(),
       users: await db.getOtherUsers(),
-      bills: await db.getAllBills()
+      bills,
+      total,
+      paid
     });
 
     let date = new Date();
@@ -188,23 +210,45 @@ class Dashboard extends Component {
     this.setState({ year, month });
   }
 
+  sortBills = bills => {
+    let d = new Date().getDate();
+    bills.sort(
+      (a, b) =>
+        (d >= a.due - 3 && !a.isPayed) === (d >= b.due - 3 && !b.isPayed)
+          ? a.isPayed === b.isPayed
+            ? 0
+            : a.isPayed
+              ? 1
+              : -1
+          : d >= a.due - 3 && !a.isPayed
+            ? -1
+            : 1
+    );
+  };
+
   addedBill = async () => {
     const { year, month } = this.state;
-    this.setState({ bills: await db.getAllBills(year, month) });
+    let bills = await db.getAllBills(year, month);
+    this.sortBills(bills);
+    this.setState({ bills });
   };
 
   changeYear = async (e, { value }) => {
     const { month } = this.state;
-    this.setState({ year: value, bills: await db.getAllBills(value, month) });
+    let bills = await db.getAllBills(value, month);
+    this.sortBills(bills);
+    this.setState({ year: value, bills });
   };
 
   changeMonth = async (e, { value }) => {
     const { year } = this.state;
-    this.setState({ month: value, bills: await db.getAllBills(year, value) });
+    let bills = await db.getAllBills(year, value);
+    this.sortBills(bills);
+    this.setState({ month: value, bills });
   };
 
   render() {
-    const { profile, users, bills, year, month } = this.state;
+    const { profile, users, bills, year, month, total, paid } = this.state;
     return (
       <ResponsiveContainer profile={profile} users={users}>
         <div className="flex-style main-col">
@@ -217,7 +261,13 @@ class Dashboard extends Component {
               addedBill={this.addedBill}
             />
           </div>
-          <BudgetTable bills={bills} year={year} month={month} />
+          <BudgetTable
+            paid={paid}
+            total={total}
+            bills={bills}
+            year={year}
+            month={month}
+          />
         </div>
       </ResponsiveContainer>
     );

@@ -114,7 +114,7 @@ export const updateCurrentBills = async (bills, year, month) => {
   bills.forEach(bill =>
     currentBills.push({
       isPayed: bill.isPayed,
-      amountPayed: bill.amountPayed,
+      amountPayed: parseFloat(bill.amountPayed),
       ref: bill.ref
     })
   );
