@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.2/workbox-sw.js");
 
 importScripts(
-  "/GreenLeaf/precache-manifest.02bb8a97a9890d41da5c3584fc41e8f8.js"
+  "/GreenLeaf/precache-manifest.c2a4ca724225779132babc2622f47ed1.js"
 );
 
 workbox.clientsClaim();
