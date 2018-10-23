@@ -190,10 +190,8 @@ class Dashboard extends Component {
     let total = 0;
     let paid = 0;
     bills.forEach(b => {
-      if (b.name !== "Mercury Home Insurance") {
-        total += b.mPayment;
-        paid += b.amountPayed;
-      }
+      total += b.mPayment;
+      paid += b.amountPayed;
     });
 
     this.setState({

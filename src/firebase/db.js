@@ -98,6 +98,7 @@ export const updateMasterBills = async bills => {
     bills.map(async bill => {
       await bill.ref.update({
         name: bill.name,
+        mPayment: parseFloat(bill.mPayment),
         due: bill.due,
         paymentType: bill.paymentType,
         url: bill.url,

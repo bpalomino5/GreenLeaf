@@ -113,6 +113,7 @@ export default class BudgetTable extends Component {
   toggleStatus = async i => {
     const { bills } = this.props;
     bills[i].isPayed = !bills[i].isPayed;
+    bills[i].amountPayed = bills[i].isPayed ? bills[i].mPayment : 0;
     this.setState({ bills, canUpdate: true });
   };
 
