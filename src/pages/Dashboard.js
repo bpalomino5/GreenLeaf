@@ -38,7 +38,7 @@ class DesktopContainer extends Component {
             </Menu.Item>
           </Menu>
         </Segment>
-        <div className="flex-style full-height">
+        <div className="flex-style container">
           <div className="side-col">
             <AuthUserContext.Consumer>
               {authUser => (
@@ -51,7 +51,7 @@ class DesktopContainer extends Component {
               )}
             </AuthUserContext.Consumer>
           </div>
-          {children}
+          <div className="main-col desktop">{children}</div>
         </div>
       </Responsive>
     );
@@ -82,7 +82,7 @@ class MobileContainer extends Component {
             animation="uncover"
             vertical
             visible={sidebarOpened}
-            style={{ backgroundColor: "#282c34" }}
+            style={{ backgroundColor: "#424c55" }}
           >
             <Menu.Item>
               <AuthUserContext.Consumer>
@@ -106,7 +106,7 @@ class MobileContainer extends Component {
             <Segment
               inverted
               textAlign="center"
-              style={{ padding: "1em 0em", backgroundColor: "#32432D" }}
+              style={{ padding: "2px 0", backgroundColor: "#32432D" }}
               vertical
             >
               <Menu inverted secondary size="large">
@@ -118,7 +118,13 @@ class MobileContainer extends Component {
                 </Menu.Item>
               </Menu>
             </Segment>
-            <div className="flex-style full-height">{children}</div>
+            <div
+              className={`container main-col ${
+                window.innerWidth <= 320 ? "smobile" : "mobile"
+              }`}
+            >
+              {children}
+            </div>
           </Sidebar.Pusher>
         </Sidebar.Pushable>
       </Responsive>
@@ -140,11 +146,10 @@ class ResponsiveContainer extends Component {
 
 const UserCard = ({ profile, email }) => {
   return (
-    <Card color="blue" raised>
+    <Card raised>
       <Card.Content>
         <Card.Header>{profile.name}</Card.Header>
         <Card.Meta>{email}</Card.Meta>
-        <Card.Meta>Current User</Card.Meta>
         <Card.Description>{profile.occupation}</Card.Description>
       </Card.Content>
       <Card.Content extra>
@@ -156,7 +161,7 @@ const UserCard = ({ profile, email }) => {
 
 const FamilyCard = ({ users }) => {
   return (
-    <Card color="green" raised>
+    <Card raised>
       <Card.Content>
         <Card.Header>Family</Card.Header>
       </Card.Content>
@@ -249,7 +254,7 @@ class Dashboard extends Component {
     const { profile, users, bills, year, month, total, paid } = this.state;
     return (
       <ResponsiveContainer profile={profile} users={users}>
-        <div className="flex-style main-col">
+        <div>
           <div style={{ marginBottom: 20 }}>
             <BillActivityMenu
               year={year}

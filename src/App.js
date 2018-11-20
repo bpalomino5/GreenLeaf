@@ -1,5 +1,4 @@
 import React, { Component } from "react";
-import "./styles/App.css";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import { Switch, Route } from "react-router-dom";

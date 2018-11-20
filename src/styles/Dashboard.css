@@ -3,20 +3,30 @@
   flex: 1;
 }
 
+.container {
+  background-color: #424c55;
+}
+
 .side-col {
-  display: flex;
-  flex: 0;
   padding: 20px;
 }
 
 .main-col {
-  padding: 20px;
+  flex: 1;
   flex-direction: column;
-  /* overflow-y: scroll; */
-  /* height: 100%; */
 }
 
-.full-height {
-  height: 100%;
-  background-color: #d2d7df;
+.main-col.desktop {
+  overflow: auto;
+  margin: 20px 0px;
+  padding: 0px 0px;
+  height: calc(100vh - 100px);
+}
+
+.main-col.mobile {
+  padding: 20px;
+}
+
+.main-col.smobile {
+  padding: 0px;
 }
